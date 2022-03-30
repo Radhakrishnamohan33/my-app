@@ -39,3 +39,49 @@ pipeline {
 
 
 
+
+
+pipeline {
+	agent any
+        environment {
+           PATH = "/opt/maven3/bin:$PATH"
+          }
+         options {
+           buildDiscarder logRotator(daysToKeepStr: '10', numToKeepStr: '7')
+          }
+          parameters {
+            choice choices: ['develop', 'qa', 'master'], description: 'Choose the branch to build', name: 'branchName'
+          }
+          stages {
+	    stage ('check out from SCM') {
+               steps {
+                  git credentialsId: 'Github', url: 'https://github.com/Radhakrishnamohan33/my-app'
+		}
+		                         }
+             stage ('Maven Build'){
+                 steps {
+                   sh "mvn clean package"
+                 }  
+		 }
+              stage ('Deploy to Tomcat'){
+                 steps {
+                   sshagent(['Tomcat']) {
+                     sh "scp -o StrictHostKeyChecking=no target/*.war ec2-user@15.206.91.51:/opt/tomcat9/webapps/"
+                     }
+	         
+             }    
+            }
+	    }
+	    post {
+  			  success {
+	      			archiveArtifacts artifacts: 'target/*.war'
+      				cleanWs()
+    }
+  }
+}
+
+
+
+
+
+
