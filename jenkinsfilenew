@@ -25,6 +25,12 @@ pipeline {
                    sshagent(['Tomcat']) {
                      sh "scp -o StrictHostKeyChecking=no target/*.war ec2-user@13.233.97.179:/opt/tomcat9/webapps/"
                      }
+		     post {
+  			  success {
+	      			archiveArtifacts artifacts: 'target/*.war'
+      				cleanWs()
+    }
+  }
 	         
              }    
             }
