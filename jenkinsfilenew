@@ -9,9 +9,9 @@ pipeline {
          options {
            buildDiscarder logRotator(daysToKeepStr: '10', numToKeepStr: '7')
           }
-          parameters {
-            choice choices: ['develop', 'qa', 'master'], description: 'Choose the branch to build', name: 'branchName'
-          }
+//          parameters {
+//          choice choices: ['develop', 'qa', 'master'], description: 'Choose the branch to build', name: 'branchName'
+//       }
           stages {
 	    stage ('check out from SCM') {
                steps {
